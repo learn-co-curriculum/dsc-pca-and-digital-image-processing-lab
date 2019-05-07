@@ -20,14 +20,7 @@ To start, load the dataset using `sklearn.datasets.load_digits`.
 
 ```python
 #Your code here
-
-from sklearn.datasets import load_digits
-data = load_digits()
-print(data.data.shape, data.target.shape)
 ```
-
-    (1797, 64) (1797,)
-
 
 ## Preview the Dataset
 
@@ -36,22 +29,7 @@ Now that the dataset is loaded, display the images of the first 20 pictures.
 
 ```python
 #Your code here
-
-import matplotlib.pyplot as plt
-%matplotlib inline
-
-fig, axes = plt.subplots(nrows=4, ncols=5, figsize=(10,10))
-for n in range(20):
-    i = n //5
-    j = n%5
-    ax = axes[i][j]
-    ax.imshow(data.images[n], cmap=plt.cm.gray)
-plt.title('First 20 Images From the MNIST Dataset');
 ```
-
-
-![png](index_files/index_4_0.png)
-
 
 ## Baseline Model
 
@@ -59,41 +37,8 @@ Now it's time to fit an initial baseline model to compare against. Fit a support
 
 
 ```python
-from sklearn import svm
-from sklearn.model_selection import train_test_split
+#Your code here
 ```
-
-
-```python
-X = data.data
-y = data.target
-X_train, X_test, y_train, y_test = train_test_split(X,y, random_state=22)
-print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
-```
-
-    (1347, 64) (450, 64) (1347,) (450,)
-
-
-
-```python
-clf = svm.SVC()#C=5, gamma=0.05)
-%timeit clf.fit(X_train, y_train)
-```
-
-    313 ms ± 9.38 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
-
-
-### Naive Baseline
-
-
-```python
-train_acc = clf.score(X_train, y_train)
-test_acc = clf.score(X_test, y_test)
-print('Training Accuracy: {}\tTesting Accuracy: {}'.format(train_acc, test_acc))
-```
-
-    Training Accuracy: 1.0	Testing Accuracy: 0.58
-
 
 ### Grid Search Baseline
 
@@ -101,40 +46,8 @@ Refine the initial model slightly by using a grid search to tune the hyperparame
 
 
 ```python
-import numpy as np
-from sklearn.model_selection import GridSearchCV
-
-clf = svm.SVC()
-param_grid = {"C" : np.linspace(.1, 10, num=11),
-             "gamma" : np.linspace(10**-3, 5, num=11)}
-grid_search = GridSearchCV(clf, param_grid, cv=5)
-%timeit grid_search.fit(X_train, y_train)
+#Your code here
 ```
-
-    2min 37s ± 2.04 s per loop (mean ± std. dev. of 7 runs, 1 loop each)
-
-
-
-```python
-grid_search.best_params_
-```
-
-
-
-
-    {'C': 2.08, 'gamma': 0.001}
-
-
-
-
-```python
-train_acc = grid_search.best_estimator_.score(X_train, y_train)
-test_acc = grid_search.best_estimator_.score(X_test, y_test)
-print('Training Accuracy: {}\tTesting Accuracy: {}'.format(train_acc, test_acc))
-```
-
-    Training Accuracy: 1.0	Testing Accuracy: 0.9911111111111112
-
 
 ## Compressing with PCA
 
@@ -142,15 +55,7 @@ Now that you've fit a baseline classifier, it's time to explore the impacts of u
 
 
 ```python
-from sklearn.decomposition import PCA
-import seaborn as sns
-sns.set_style('darkgrid')
-```
-
-
-```python
-pca = PCA()
-X_pca = pca.fit_transform(X_train)
+#Your code here
 ```
 
 ## Plot the Explained Variance versus Number of Features
@@ -159,19 +64,8 @@ In order to determine the number of features you wish to reduce the dataset to, 
 
 
 ```python
-plt.plot(range(1,65), pca.explained_variance_ratio_.cumsum())
+#Your code here
 ```
-
-
-
-
-    [<matplotlib.lines.Line2D at 0x1a1bdab748>]
-
-
-
-
-![png](index_files/index_19_1.png)
-
 
 ## Determine the Number of Features to Capture 95% of the Datasets Variance
 
@@ -179,14 +73,8 @@ Great! Now determine the number of features needed to capture 95% of the dataset
 
 
 ```python
-total_explained_variance = pca.explained_variance_ratio_.cumsum()
-n_over_95 = len(total_explained_variance[total_explained_variance >= .95])
-n_to_reach_95 = X.shape[1] - n_over_95 + 1
-print("Number features: {}\tTotal Variance Explained: {}".format(n_to_reach_95, total_explained_variance[n_to_reach_95-1]))
+#Your code here
 ```
-
-    Number features: 29	Total Variance Explained: 0.9549611953216072
-
 
 ## Subset the Dataset to these Principle Components which Capture 95%+ of the Overall Variance
 
@@ -194,17 +82,8 @@ Use your knowledge to reproject the dataset into a lower dimensional space using
 
 
 ```python
-pca = PCA(n_components=n_to_reach_95)
-X_pca_train = pca.fit_transform(X_train)
-pca.explained_variance_ratio_.cumsum()[-1]
+#Your code here
 ```
-
-
-
-
-    0.954960692471563
-
-
 
 ## Refit a Model on the Compressed Dataset
 
@@ -212,23 +91,8 @@ Now, refit a classification model to the compressed dataset. Be sure to time the
 
 
 ```python
-X_pca_test = pca.transform(X_test)
-clf = svm.SVC()
-%timeit clf.fit(X_pca_train, y_train)
+#Your code here
 ```
-
-    176 ms ± 666 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
-
-
-
-```python
-train_pca_acc = clf.score(X_pca_train, y_train)
-test_pca_acc = clf.score(X_pca_test, y_test)
-print('Training Accuracy: {}\tTesting Accuracy: {}'.format(train_pca_acc, test_pca_acc))
-```
-
-    Training Accuracy: 1.0	Testing Accuracy: 0.14888888888888888
-
 
 ### Grid Search
 
@@ -236,37 +100,8 @@ Finally, use grid search to find optimal hyperparameters for the classifier on t
 
 
 ```python
-clf = svm.SVC()
-param_grid = {"C" : np.linspace(.1, 10, num=11),
-             "gamma" : np.linspace(10**-3, 5, num=11)}
-grid_search = GridSearchCV(clf, param_grid, cv=5)
-%timeit grid_search.fit(X_pca_train, y_train)
+#Your code here
 ```
-
-    1min 32s ± 2.08 s per loop (mean ± std. dev. of 7 runs, 1 loop each)
-
-
-
-```python
-grid_search.best_params_
-```
-
-
-
-
-    {'C': 2.08, 'gamma': 0.001}
-
-
-
-
-```python
-train_acc = grid_search.best_estimator_.score(X_pca_train, y_train)
-test_acc = grid_search.best_estimator_.score(X_pca_test, y_test)
-print('Training Accuracy: {}\tTesting Accuracy: {}'.format(train_acc, test_acc))
-```
-
-    Training Accuracy: 0.9992576095025983	Testing Accuracy: 0.9933333333333333
-
 
 ## Summary
 
