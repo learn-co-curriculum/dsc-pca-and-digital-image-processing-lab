@@ -76,14 +76,17 @@ print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
 
 
 ```python
-clf = svm.SVC()#C=5, gamma=0.05)
+clf = svm.SVC(gamma='auto')
 %timeit clf.fit(X_train, y_train)
 ```
 
-    313 ms ± 9.38 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    252 ms ± 14.8 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 
-### Naive Baseline
+
+```python
+# Naive Baseline
+```
 
 
 ```python
@@ -111,7 +114,7 @@ grid_search = GridSearchCV(clf, param_grid, cv=5)
 %timeit grid_search.fit(X_train, y_train)
 ```
 
-    2min 37s ± 2.04 s per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    1min 22s ± 127 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 
 
@@ -165,7 +168,7 @@ plt.plot(range(1,65), pca.explained_variance_ratio_.cumsum())
 
 
 
-    [<matplotlib.lines.Line2D at 0x1a1bdab748>]
+    [<matplotlib.lines.Line2D at 0x1a19ddb7f0>]
 
 
 
@@ -185,7 +188,7 @@ n_to_reach_95 = X.shape[1] - n_over_95 + 1
 print("Number features: {}\tTotal Variance Explained: {}".format(n_to_reach_95, total_explained_variance[n_to_reach_95-1]))
 ```
 
-    Number features: 29	Total Variance Explained: 0.9549611953216072
+    Number features: 29	Total Variance Explained: 0.9549611953216074
 
 
 ## Subset the Dataset to these Principle Components which Capture 95%+ of the Overall Variance
@@ -202,7 +205,7 @@ pca.explained_variance_ratio_.cumsum()[-1]
 
 
 
-    0.954960692471563
+    0.954954231338425
 
 
 
@@ -213,11 +216,11 @@ Now, refit a classification model to the compressed dataset. Be sure to time the
 
 ```python
 X_pca_test = pca.transform(X_test)
-clf = svm.SVC()
+clf = svm.SVC(gamma='auto')
 %timeit clf.fit(X_pca_train, y_train)
 ```
 
-    176 ms ± 666 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+    137 ms ± 958 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
 
 
@@ -243,7 +246,7 @@ grid_search = GridSearchCV(clf, param_grid, cv=5)
 %timeit grid_search.fit(X_pca_train, y_train)
 ```
 
-    1min 32s ± 2.08 s per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    51.8 s ± 917 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 
 
