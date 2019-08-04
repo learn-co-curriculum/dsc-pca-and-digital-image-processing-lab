@@ -81,10 +81,6 @@ from sklearn import svm
 from sklearn.model_selection import train_test_split
 ```
 
-### Grid Search Baseline
-
-Refine the initial model slightly by using a grid search to tune the hyperparameters. The two most important parameters to adjust are "C" and "gamma". Once again, be sure to record the training time as well as the train and test accuracy.
-
 
 ```python
 # __SOLUTION__ 
@@ -99,26 +95,18 @@ print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
 
 
 ```python
-#Your code here
-```
-
-
-```python
 # __SOLUTION__ 
-clf = svm.SVC()#C=5, gamma=0.05)
+clf = svm.SVC(gamma='auto')
 %timeit clf.fit(X_train, y_train)
 ```
 
-    313 ms ± 9.38 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    252 ms ± 14.8 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
-
-## Compressing with PCA
-
-Now that you've fit a baseline classifier, it's time to explore the impacts of using PCA as a preprocessing technique. To start, perform PCA on X_train. (Be sure to only fit PCA to X_train; you don't want to leak any information from the test set.) Also, don't reduce the number of features quite yet. You'll determine the number of features needed to account for 95% of the overall variance momentarily.
 
 
 ```python
-#Your code here
+# __SOLUTION__
+# Naive Baseline
 ```
 
 
@@ -132,9 +120,9 @@ print('Training Accuracy: {}\tTesting Accuracy: {}'.format(train_acc, test_acc))
     Training Accuracy: 1.0	Testing Accuracy: 0.58
 
 
-## Plot the Explained Variance versus Number of Features
+### Grid Search Baseline
 
-In order to determine the number of features you wish to reduce the dataset to, it is sensible to plot the overall variance accounted for by the first n principle components. Create a graph of the variance explained versus the number of principle components.
+Refine the initial model slightly by using a grid search to tune the hyperparameters. The two most important parameters to adjust are "C" and "gamma". Once again, be sure to record the training time as well as the train and test accuracy.
 
 
 ```python
@@ -154,12 +142,8 @@ grid_search = GridSearchCV(clf, param_grid, cv=5)
 %timeit grid_search.fit(X_train, y_train)
 ```
 
-    2min 37s ± 2.04 s per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    1min 22s ± 127 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
-
-## Determine the Number of Features to Capture 95% of the Datasets Variance
-
-Great! Now determine the number of features needed to capture 95% of the dataset's overall variance.
 
 
 ```python
@@ -176,11 +160,6 @@ grid_search.best_params_
 
 
 ```python
-#Your code here
-```
-
-
-```python
 # __SOLUTION__ 
 train_acc = grid_search.best_estimator_.score(X_train, y_train)
 test_acc = grid_search.best_estimator_.score(X_test, y_test)
@@ -190,9 +169,9 @@ print('Training Accuracy: {}\tTesting Accuracy: {}'.format(train_acc, test_acc))
     Training Accuracy: 1.0	Testing Accuracy: 0.9911111111111112
 
 
-## Subset the Dataset to these Principle Components which Capture 95%+ of the Overall Variance
+## Compressing with PCA
 
-Use your knowledge to reproject the dataset into a lower dimensional space using PCA. 
+Now that you've fit a baseline classifier, it's time to explore the impacts of using PCA as a preprocessing technique. To start, perform PCA on X_train. (Be sure to only fit PCA to X_train; you don't want to leak any information from the test set.) Also, don't reduce the number of features quite yet. You'll determine the number of features needed to account for 95% of the overall variance momentarily.
 
 
 ```python
@@ -207,10 +186,6 @@ import seaborn as sns
 sns.set_style('darkgrid')
 ```
 
-## Refit a Model on the Compressed Dataset
-
-Now, refit a classification model to the compressed dataset. Be sure to time the required training time, as well as the test and training accuracy.
-
 
 ```python
 # __SOLUTION__ 
@@ -218,14 +193,14 @@ pca = PCA()
 X_pca = pca.fit_transform(X_train)
 ```
 
+## Plot the Explained Variance versus Number of Features
+
+In order to determine the number of features you wish to reduce the dataset to, it is sensible to plot the overall variance accounted for by the first n principle components. Create a graph of the variance explained versus the number of principle components.
+
 
 ```python
 #Your code here
 ```
-
-### Grid Search
-
-Finally, use grid search to find optimal hyperparameters for the classifier on the reduced dataset. Be sure to record the time required to fit the model, the optimal hyperparameters and the test and train accuracy of the resulting model.
 
 
 ```python
@@ -236,22 +211,22 @@ plt.plot(range(1,65), pca.explained_variance_ratio_.cumsum())
 
 
 
-    [<matplotlib.lines.Line2D at 0x1a1bdab748>]
+    [<matplotlib.lines.Line2D at 0x1a19ddb7f0>]
 
 
 
 
-![png](index_files/index_31_1.png)
+![png](index_files/index_25_1.png)
 
+
+## Determine the Number of Features to Capture 95% of the Datasets Variance
+
+Great! Now determine the number of features needed to capture 95% of the dataset's overall variance.
 
 
 ```python
 #Your code here
 ```
-
-## Summary
-
-Well done! In this lab, you employed PCA to reduce a high dimensional dataset. With this, you observed the potential cost benefits required to train a model and performance gains of the model itself.
 
 
 ```python
@@ -262,8 +237,17 @@ n_to_reach_95 = X.shape[1] - n_over_95 + 1
 print("Number features: {}\tTotal Variance Explained: {}".format(n_to_reach_95, total_explained_variance[n_to_reach_95-1]))
 ```
 
-    Number features: 29	Total Variance Explained: 0.9549611953216072
+    Number features: 29	Total Variance Explained: 0.9549611953216074
 
+
+## Subset the Dataset to these Principle Components which Capture 95%+ of the Overall Variance
+
+Use your knowledge to reproject the dataset into a lower dimensional space using PCA. 
+
+
+```python
+#Your code here
+```
 
 
 ```python
@@ -276,19 +260,28 @@ pca.explained_variance_ratio_.cumsum()[-1]
 
 
 
-    0.954960692471563
+    0.954954231338425
 
 
+
+## Refit a Model on the Compressed Dataset
+
+Now, refit a classification model to the compressed dataset. Be sure to time the required training time, as well as the test and training accuracy.
+
+
+```python
+#Your code here
+```
 
 
 ```python
 # __SOLUTION__ 
 X_pca_test = pca.transform(X_test)
-clf = svm.SVC()
+clf = svm.SVC(gamma='auto')
 %timeit clf.fit(X_pca_train, y_train)
 ```
 
-    176 ms ± 666 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+    137 ms ± 958 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
 
 
@@ -302,6 +295,15 @@ print('Training Accuracy: {}\tTesting Accuracy: {}'.format(train_pca_acc, test_p
     Training Accuracy: 1.0	Testing Accuracy: 0.14888888888888888
 
 
+### Grid Search
+
+Finally, use grid search to find optimal hyperparameters for the classifier on the reduced dataset. Be sure to record the time required to fit the model, the optimal hyperparameters and the test and train accuracy of the resulting model.
+
+
+```python
+#Your code here
+```
+
 
 ```python
 # __SOLUTION__ 
@@ -312,7 +314,7 @@ grid_search = GridSearchCV(clf, param_grid, cv=5)
 %timeit grid_search.fit(X_pca_train, y_train)
 ```
 
-    1min 32s ± 2.08 s per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    51.8 s ± 917 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 
 
@@ -338,3 +340,7 @@ print('Training Accuracy: {}\tTesting Accuracy: {}'.format(train_acc, test_acc))
 
     Training Accuracy: 0.9992576095025983	Testing Accuracy: 0.9933333333333333
 
+
+## Summary
+
+Well done! In this lab, you employed PCA to reduce a high dimensional dataset. With this, you observed the potential cost benefits required to train a model and performance gains of the model itself.
