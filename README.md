@@ -47,6 +47,7 @@ Refine the initial model slightly by using a grid search to tune the hyperparame
 
 ```python
 #Your code here
+# ⏰ Your code may take several minutes to run
 ```
 
 ## Compressing with PCA
@@ -101,6 +102,7 @@ Finally, use grid search to find optimal hyperparameters for the classifier on t
 
 ```python
 #Your code here
+# ⏰ Your code may take several minutes to run
 ```
 
 ## Summary
