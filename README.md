@@ -1,9 +1,8 @@
-
 # Image Recognition with PCA - Lab
 
 ## Introduction
 
-In this lab, you'll explore the classic MNIST dataset of handwritten digits. While not as large as the previous dataset on facial image recognition, it still provides a 64 dimensional dataset that is ripe for feature reduction.
+In this lab, you'll explore the classic MNIST dataset of handwritten digits. While not as large as the previous dataset on facial image recognition, it still provides a 64-dimensional dataset that is ripe for feature reduction.
 
 ## Objectives
 
@@ -93,7 +92,7 @@ print('Training Accuracy: {}\tTesting Accuracy: {}'.format(train_acc, test_acc))
 
 ### Grid search baseline
 
-Refine the initial model by using a grid search to tune the hyperparameters. The two most important parameters to adjust are `'C'` and `'gamma'`. Once again, be sure to record the training time as well as the training and test accuracy.
+Refine the initial model by performing a grid search to tune the hyperparameters. The two most important parameters to adjust are `'C'` and `'gamma'`. Once again, be sure to record the training time as well as the training and test accuracy.
 
 
 ```python
@@ -151,9 +150,9 @@ pca = PCA()
 X_pca = pca.fit_transform(X_train)
 ```
 
-## Plot the explained variance versus number of features
+## Plot the explained variance versus the number of features
 
-In order to determine the number of features you wish to reduce the dataset to, it is sensible to plot the overall variance accounted for by the first $n$ principle components. Create a graph of the variance explained versus the number of principle components.
+In order to determine the number of features you wish to reduce the dataset to, it is sensible to plot the overall variance accounted for by the first $n$ principal components. Create a graph of the variance explained versus the number of principal components.
 
 
 ```python
@@ -186,9 +185,9 @@ print("Number features: {}\tTotal Variance Explained: {}".format(n_to_reach_95, 
     Number features: 29	Total Variance Explained: 0.9549611953216074
 
 
-## Subset the dataset to these principle components which capture 95%+ of the overall variance
+## Subset the dataset to these principal components which capture 95% of the overall variance
 
-Use your knowledge to reproject the dataset into a lower dimensional space using PCA. 
+Use your knowledge to reproject the dataset into a lower-dimensional space using PCA. 
 
 
 ```python
